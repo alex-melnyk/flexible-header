@@ -1,17 +1,17 @@
-import React, { useRef } from 'react';
+import React, { useCallback, useRef, useState } from 'react';
 import {
   Animated,
   Dimensions,
-  ImageBackground,
+  FlatList,
   NativeScrollEvent,
   NativeSyntheticEvent,
   SafeAreaView,
   StyleSheet,
-  Text,
+  TouchableOpacity,
   View
 } from 'react-native';
 import Mountains from './src/data/mountains.json';
-import { Images } from './src/assets';
+import { ListItem } from './src/components';
 
 const {
   width: screenWidth,
@@ -23,12 +23,34 @@ const HEADER_MAX_HEIGHT = screenHeight / 3;
 const HEADER_MAX_INTERPOLATE = HEADER_MAX_HEIGHT - HEADER_MIN_HEIGHT;
 
 export default function App() {
+  const flatListRef = useRef<{ getNode: () => FlatList<typeof ListItem> }>();
   const headerAnimated = useRef(new Animated.Value(0)).current;
+  const overlayAnimated = useRef(new Animated.Value(0)).current;
+  const [overlayLocation, setOverlayLocation] = useState(0);
 
-  const handleScrollBegin = (e: NativeSyntheticEvent<NativeScrollEvent>) => {
+  const handleScrollBegin = useCallback((e: NativeSyntheticEvent<NativeScrollEvent>) => {
     const { nativeEvent: { contentOffset } } = e;
     headerAnimated.setValue(contentOffset.y);
-  };
+  }, [headerAnimated]);
+
+  const handleListItemPress = useCallback((location: number, item: { image: string; label: string; }) => {
+    setOverlayLocation(location);
+
+    Animated.timing(overlayAnimated, {
+      toValue: 1,
+      duration: 300,
+    }).start();
+  }, [overlayAnimated]);
+
+  const overlayTop = overlayAnimated.interpolate({
+    inputRange: [0, 1],
+    outputRange: [overlayLocation, 0]
+  });
+
+  const overlaySize = overlayAnimated.interpolate({
+    inputRange: [0, 1],
+    outputRange: [200, screenHeight]
+  });
 
   const headerHeight = headerAnimated.interpolate({
     inputRange: [-HEADER_MIN_HEIGHT, 0, HEADER_MAX_INTERPOLATE],
@@ -63,6 +85,7 @@ export default function App() {
   return (
     <View style={styles.container}>
       <Animated.FlatList
+        ref={flatListRef}
         style={{
           marginTop: offsetHeight
         }}
@@ -75,18 +98,11 @@ export default function App() {
         data={Mountains}
         keyExtractor={(v, i) => `card_${i}`}
         renderItem={({ item }) => (
-          <View style={styles.item}>
-            <ImageBackground
-              style={styles.itemBackgroundImage}
-              source={Images[item.image]}
-            >
-              <View style={styles.itemContent}>
-                <Text style={styles.itemLabel}>
-                  {item.label}
-                </Text>
-              </View>
-            </ImageBackground>
-          </View>
+          <ListItem
+            image={item.image}
+            label={item.label}
+            onPress={(location) => handleListItemPress(location, item)}
+          />
         )}
         onScroll={handleScrollBegin}
       />
@@ -114,10 +130,27 @@ export default function App() {
                 fontSize: titleSize
               }]}
             >
-              Where to go hiking
+              Mountains Hiking
             </Animated.Text>
           </SafeAreaView>
         </Animated.View>
+      </Animated.View>
+      <Animated.View style={{
+        position: 'absolute',
+        left: 0,
+        top: overlayTop,
+        width: '100%',
+        height: overlaySize,
+      }}>
+        <TouchableOpacity
+          style={{
+            flex: 1,
+            backgroundColor: 'red'
+          }}
+          onPress={() => overlayAnimated.setValue(0)}
+        >
+
+        </TouchableOpacity>
       </Animated.View>
     </View>
   );
@@ -151,28 +184,6 @@ const styles = StyleSheet.create({
   headerContentTitle: {
     fontWeight: '800',
     textTransform: 'uppercase',
-    color: '#F6F7EB'
-  },
-  item: {
-    margin: 10,
-    marginBottom: 0,
-    height: 200,
-    borderRadius: 10,
-    backgroundColor: '#434343',
-    overflow: 'hidden'
-  },
-  itemBackgroundImage: {
-    width: '100%',
-    height: '100%'
-  },
-  itemContent: {
-    padding: 20,
-    flex: 1,
-    justifyContent: 'flex-end'
-  },
-  itemLabel: {
-    fontSize: 26,
-    fontWeight: '800',
     color: '#F6F7EB'
   }
 });

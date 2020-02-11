@@ -1,7 +1,7 @@
 import React, { useRef } from 'react';
 import {
   Animated,
-  Dimensions, FlatList,
+  Dimensions,
   ImageBackground,
   NativeScrollEvent,
   NativeSyntheticEvent,
@@ -10,8 +10,8 @@ import {
   Text,
   View
 } from 'react-native';
-
-const BGImage = require('./assets/img/bg.jpg');
+import Mountains from './src/data/mountains.json';
+import { Images } from './src/assets';
 
 const {
   width: screenWidth,
@@ -21,52 +21,6 @@ const {
 const HEADER_MIN_HEIGHT = 80;
 const HEADER_MAX_HEIGHT = screenHeight / 3;
 const HEADER_MAX_INTERPOLATE = HEADER_MAX_HEIGHT - HEADER_MIN_HEIGHT;
-
-const DATA: Array<{
-  label: string;
-  image?: string;
-}> = [
-  {
-    label: 'Everest',
-    image: require('./assets/img/mountains/everest.jpg')
-  },
-  {
-    label: 'K2',
-    image: require('./assets/img/mountains/k2.jpg')
-  },
-  {
-    label: 'Kangchenjunga',
-    image: require('./assets/img/mountains/kangchenjunga.jpg')
-  },
-  {
-    label: 'Lhotse',
-    image: require('./assets/img/mountains/lhotse.jpg')
-  },
-  {
-    label: 'Makalu',
-    image: require('./assets/img/mountains/makalu.jpg')
-  },
-  {
-    label: 'Cho Oyu',
-    image: require('./assets/img/mountains/cho-oyu.jpg')
-  },
-  {
-    label: 'Dhaulagiri',
-    image: require('./assets/img/mountains/dhaulagiri.jpg')
-  },
-  {
-    label: 'Manaslu',
-    image: require('./assets/img/mountains/manaslu.jpg')
-  },
-  {
-    label: 'Nanga Parbat',
-    image: require('./assets/img/mountains/nanga-parbat.jpg')
-  },
-  {
-    label: 'Annapurna',
-    image: require('./assets/img/mountains/annapurna.jpg')
-  }
-];
 
 export default function App() {
   const headerAnimated = useRef(new Animated.Value(0)).current;
@@ -118,13 +72,13 @@ export default function App() {
         )}
         showsVerticalScrollIndicator={false}
         scrollEventThrottle={16}
-        data={DATA}
+        data={Mountains}
         keyExtractor={(v, i) => `card_${i}`}
-        renderItem={({ item, index: i }) => (
+        renderItem={({ item }) => (
           <View style={styles.item}>
             <ImageBackground
               style={styles.itemBackgroundImage}
-              source={item.image}
+              source={Images[item.image]}
             >
               <View style={styles.itemContent}>
                 <Text style={styles.itemLabel}>
@@ -142,7 +96,7 @@ export default function App() {
         }]}
       >
         <Animated.Image
-          source={BGImage}
+          source={require('./assets/img/bg.jpg')}
           style={[styles.headerBackgroundImage, {
             height: headerHeight
           }]}
@@ -160,7 +114,7 @@ export default function App() {
                 fontSize: titleSize
               }]}
             >
-              Mountains
+              Where to go hiking
             </Animated.Text>
           </SafeAreaView>
         </Animated.View>

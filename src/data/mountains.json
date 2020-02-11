@@ -1,0 +1,42 @@
+[
+  {
+    "label": "Everest",
+    "image": "everest"
+  },
+  {
+    "label": "K2",
+    "image": "k2"
+  },
+  {
+    "label": "Kangchenjunga",
+    "image": "kangchenjunga"
+  },
+  {
+    "label": "Lhotse",
+    "image": "lhotse"
+  },
+  {
+    "label": "Makalu",
+    "image": "makalu"
+  },
+  {
+    "label": "Cho Oyu",
+    "image": "cho_oyu"
+  },
+  {
+    "label": "Dhaulagiri",
+    "image": "dhaulagiri"
+  },
+  {
+    "label": "Manaslu",
+    "image": "manaslu"
+  },
+  {
+    "label": "Nanga Parbat",
+    "image": "nanga_parbat"
+  },
+  {
+    "label": "Annapurna",
+    "image": "annapurna"
+  }
+]

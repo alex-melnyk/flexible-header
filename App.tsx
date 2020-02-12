@@ -7,11 +7,16 @@ import {
   NativeSyntheticEvent,
   SafeAreaView,
   StyleSheet,
-  TouchableOpacity,
   View
 } from 'react-native';
 import Mountains from './src/data/mountains.json';
 import { ListItem } from './src/components';
+import { ItemDetails } from './src/components/ItemDetails';
+
+type Item = {
+  image: string;
+  label: string;
+};
 
 const {
   width: screenWidth,
@@ -25,15 +30,17 @@ const HEADER_MAX_INTERPOLATE = HEADER_MAX_HEIGHT - HEADER_MIN_HEIGHT;
 export default function App() {
   const flatListRef = useRef<{ getNode: () => FlatList<typeof ListItem> }>();
   const headerAnimated = useRef(new Animated.Value(0)).current;
-  const overlayAnimated = useRef(new Animated.Value(0)).current;
+  const overlayAnimated = useRef(new Animated.Value(1)).current;
   const [overlayLocation, setOverlayLocation] = useState(0);
+  const [selectedItem, setSelectedItem] = useState<Item>();
 
   const handleScrollBegin = useCallback((e: NativeSyntheticEvent<NativeScrollEvent>) => {
     const { nativeEvent: { contentOffset } } = e;
     headerAnimated.setValue(contentOffset.y);
   }, [headerAnimated]);
 
-  const handleListItemPress = useCallback((location: number, item: { image: string; label: string; }) => {
+  const handleListItemPress = useCallback((location: number, item: Item) => {
+    setSelectedItem(item);
     setOverlayLocation(location);
 
     Animated.timing(overlayAnimated, {
@@ -42,15 +49,12 @@ export default function App() {
     }).start();
   }, [overlayAnimated]);
 
-  const overlayTop = overlayAnimated.interpolate({
-    inputRange: [0, 1],
-    outputRange: [overlayLocation, 0]
-  });
-
-  const overlaySize = overlayAnimated.interpolate({
-    inputRange: [0, 1],
-    outputRange: [200, screenHeight]
-  });
+  const handleDismissItem = useCallback(() => {
+    Animated.timing(overlayAnimated, {
+      toValue: 0,
+      duration: 150,
+    }).start(() => setSelectedItem(undefined));
+  }, []);
 
   const headerHeight = headerAnimated.interpolate({
     inputRange: [-HEADER_MIN_HEIGHT, 0, HEADER_MAX_INTERPOLATE],
@@ -135,23 +139,13 @@ export default function App() {
           </SafeAreaView>
         </Animated.View>
       </Animated.View>
-      <Animated.View style={{
-        position: 'absolute',
-        left: 0,
-        top: overlayTop,
-        width: '100%',
-        height: overlaySize,
-      }}>
-        <TouchableOpacity
-          style={{
-            flex: 1,
-            backgroundColor: 'red'
-          }}
-          onPress={() => overlayAnimated.setValue(0)}
-        >
-
-        </TouchableOpacity>
-      </Animated.View>
+      <ItemDetails
+        data={selectedItem}
+        animatedValue={overlayAnimated}
+        beginPoint={overlayLocation}
+        visible={!!selectedItem}
+        onDismiss={handleDismissItem}
+      />
     </View>
   );
 }

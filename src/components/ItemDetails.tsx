@@ -24,6 +24,11 @@ export const ItemDetails: React.FC<Props> = ({ data, animatedValue, beginPoint, 
     outputRange: [beginPoint, 0]
   });
 
+  const overlayOpacity = animatedValue.interpolate({
+    inputRange: [0, 0.25, 1],
+    outputRange: [0, 1, 1]
+  });
+
   const overlaySize = animatedValue.interpolate({
     inputRange: [0, 1],
     outputRange: [200, screenHeight]
@@ -46,6 +51,7 @@ export const ItemDetails: React.FC<Props> = ({ data, animatedValue, beginPoint, 
       top: overlayTop,
       width: '100%',
       height: overlaySize,
+      opacity: overlayOpacity
     }}>
       <Animated.View
         style={{

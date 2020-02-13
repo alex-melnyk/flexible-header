@@ -30,7 +30,7 @@ const HEADER_MAX_INTERPOLATE = HEADER_MAX_HEIGHT - HEADER_MIN_HEIGHT;
 export default function App() {
   const flatListRef = useRef<{ getNode: () => FlatList<typeof ListItem> }>();
   const headerAnimated = useRef(new Animated.Value(0)).current;
-  const overlayAnimated = useRef(new Animated.Value(1)).current;
+  const overlayAnimated = useRef(new Animated.Value(0)).current;
   const [overlayLocation, setOverlayLocation] = useState(0);
   const [selectedItem, setSelectedItem] = useState<Item>();
 
@@ -44,6 +44,7 @@ export default function App() {
     setOverlayLocation(location);
 
     Animated.timing(overlayAnimated, {
+      delay: 150,
       toValue: 1,
       duration: 300,
     }).start();

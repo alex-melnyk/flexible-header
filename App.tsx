@@ -23,7 +23,7 @@ const {
   height: screenHeight
 } = Dimensions.get('screen');
 
-const HEADER_MIN_HEIGHT = 80;
+const HEADER_MIN_HEIGHT = 100;
 const HEADER_MAX_HEIGHT = screenHeight / 3;
 const HEADER_MAX_INTERPOLATE = HEADER_MAX_HEIGHT - HEADER_MIN_HEIGHT;
 
@@ -71,7 +71,7 @@ export default function App() {
 
   const titleSize = headerAnimated.interpolate({
     inputRange: [0, HEADER_MAX_INTERPOLATE],
-    outputRange: [28, 22],
+    outputRange: [28, 20],
     extrapolate: 'clamp'
   });
 
@@ -162,7 +162,7 @@ const styles = StyleSheet.create({
     flex: 1
   },
   headerContentTitle: {
-    fontWeight: '800',
+    fontWeight: '600',
     textTransform: 'uppercase',
     color: '#F6F7EB'
   }

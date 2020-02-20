@@ -69,18 +69,6 @@ export default function App() {
     extrapolate: 'clamp'
   });
 
-  const reverseHeight = headerAnimated.interpolate({
-    inputRange: [0, HEADER_MAX_INTERPOLATE],
-    outputRange: [0, HEADER_MAX_HEIGHT - HEADER_MIN_HEIGHT],
-    extrapolate: 'clamp'
-  });
-
-  const offsetHeight = headerAnimated.interpolate({
-    inputRange: [0, HEADER_MAX_INTERPOLATE],
-    outputRange: [HEADER_MAX_HEIGHT, HEADER_MIN_HEIGHT],
-    extrapolate: 'clamp'
-  });
-
   const titleSize = headerAnimated.interpolate({
     inputRange: [0, HEADER_MAX_INTERPOLATE],
     outputRange: [28, 22],
@@ -91,12 +79,9 @@ export default function App() {
     <View style={styles.container}>
       <Animated.FlatList
         ref={flatListRef}
-        style={{
-          marginTop: offsetHeight
-        }}
         contentContainerStyle={styles.list}
         ListHeaderComponent={(
-          <Animated.View style={{ height: reverseHeight }}/>
+          <Animated.View style={{ height: HEADER_MAX_HEIGHT }}/>
         )}
         showsVerticalScrollIndicator={false}
         scrollEventThrottle={16}
